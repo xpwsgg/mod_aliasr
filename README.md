@@ -67,6 +67,10 @@ originate user/1001 'start_aliasr,echo' inline
 fs_cli可以通过`/event plain Custom aliasr_start  aliasr_update aliasr_stop`订阅事件
 识别结果通过esl输出
 
+#### 回调事件
+在aliasr.con.xml中有个callback-url，可以配置一个http地址，每次（实时）识别结束后，会把识别结果post到这个地址。
+
+
 ```
 RECV EVENT
 Event-Subclass: start_aliasr
