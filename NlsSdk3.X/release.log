@@ -1,0 +1,132 @@
+-----2019/04/03 Version:3.0.1-----
+
+1: 首次发布异步Linux版本
+2: start,sendAudio,stop,cancel等接口均为异步接口，不会等待执行结果在返回，识别结果通过回调事件上报。
+
+-----2019/05/13 Version:3.0.2-----
+
+1: 调整日志输出
+
+
+-----2019/09/19 Version:3.0.4-----
+
+1: fix stop指令未发出BUG
+
+
+-----2019/10/09 Version:3.0.5-----
+
+1: 修复android tts异常BUG
+2: 优化android dns获取过程
+
+-----2019/10/09 Version:3.0.6-----
+1: 优化安卓UTF8处理
+
+-----2019/10/09 Version:3.0.7-----
+1: 调整android dns处理
+2: 解决ssl 多次释放
+
+-----2019/10/09 Version:3.0.8-----
+1: 修复tts BUG
+
+-----2020/01/09 Version:3.0.9-----
+1: 优化cancel流程
+2: 优化tts json解析流程
+
+-----2020/01/09 Version:3.0.10-----
+1: 解决更换编译服务器后 ，退出时偶现的block现象
+
+-----2022/01/13 Version:3.1.9-----
+1: 增加Android支持
+2: 增加Windows X64支持
+3: 增加Windows C#支持
+4: 增加opus支持
+5: 提升并发能力
+
+-----2022/01/21 Version:3.1.10-----
+1: 解决由于中文注释和文档格式导致的Windows编译问题
+2: 降低高并发情况下的CPU占用和延迟
+
+-----2022/02/11 Version:3.1.11-----
+1: 解决Windows Demo中错误使用fopen的mode参数导致的音频数据写入文件错误
+2: 为C# SDK增加SDK name设置接口
+3: 解决C#与C++互操作层中bool导致的结构体不对齐的问题
+
+-----2022/03/09 Version:3.1.12-----
+1: 增加设置套接口地址类型接口，用于套接口地址类型切换
+2: 默认使用ipv4进行dns解析和链接，从而解决ipv6失败导致的联网失败问题
+3: 增加设置直连IP地址，用于专有云私有云情况下直连IP
+4: 客户端去掉SSL证书验证
+
+-----2022/03/28 Version:3.1.13-----
+1: 增加接口以选择是否使用本地getaddrinfo()替代libevent中的evdns_getaddrinfo()
+2: 解决ECS环境下无法正常联网的问题
+3: 增加长文本(超300字符)语音合成demo
+4: 增加Windows 32位的支持
+5: 修复Csharp中内存泄露问题, 补全遗漏接口
+6: 增加长链接模式
+7: C#进行多并发重构，完善Demo中多并发相关功能
+8: 增加录音文件识别功能和对应Demo
+9: 解决有些环境下release版本运行崩溃问题
+
+-----2022/11/09 Version:3.1.14-----
+1: log输入增加过滤，过滤%的占位符
+2: log4cpp中进行代码修改, 修改可能导致崩溃的地方
+3: 将打印log中appkey和TOKEN等账号有关的信息进行了隐藏
+4: startWorkThread中增加git commit id和sdk version的打印
+5: 增加log4cpp的单元测试代码
+6: 增加异步录音文件识别的功能
+7: 修复多并发时, start后马上cancel马上releaseSynthesizerRequest马上releaseInstance时崩溃的问题; 以及release后继续操作导致的崩溃
+8: 修复两次TaskFailed回调
+9: 增加tts语音合成文本字符数计算
+10:README中增加调用流程图
+11:增加更加详细的错误码
+12:降低高并发情况下的CPU占用
+13:增加timeout设置
+14:增强Windows版本兼容性
+
+-----2022/12/22 Version:3.1.15-----
+1: 增加支持C++11特性和_GLIBCXX_USE_CXX11_ABI=1的编译选项
+2: 录音文件转写支持STS访问方式
+3: 支持Aarch64-Linux编译
+4: 支持mcos调用示例
+5: 支持ptts调用示例
+6: 解决非安全释放时死锁的问题
+
+-----2023/02/08 Version:3.1.16-----
+1: 重构状态机管理, 增强异常调用的稳定性, 通过monkey测试
+2: 增加消息接收超时开关设置, 默认为关闭
+3: 增加OnMessage回调, 所有消息可从这个回调推出, 可开关控制
+4: Windows Cpp编译全部改成MD&MDd模式, 去除VC-LTL
+5: Windows Cpp编译工具链更新为v142, 用于支持虚幻5引擎开发
+6: 修改delegate参数, 以支持Unity3D
+
+-----2023/07/28 Version:3.1.17-----
+1: 增加control()接口可修改header中name
+2: 关闭libevent的dns大小写混合模式
+3: 修复长链接模式下在TaskFailed后重复触发_readEvent
+4: 修复丢失Closed回调的错误
+5: 增加尝试错误当SSL_read失败
+6: 增加接口getTaskId()以主动获得task_id
+7: 增加callback以加日志信息通过回调传递出来
+8: demo CMakeLists.txt中增加参数选择以支持低版本glibc环境下编译
+9: 使用系统接口进行解析时用getaddrinfo_a()替代getaddrinfo(), 以修复长时间运行崩溃的问题
+10:在使用OPUS/OPU音频格式情况下, 去掉音频数据字节数限制
+11:修复长时间运行偶现start()卡死的问题
+12:增加start()/stop()同步调用方式, 方便老版本升级
+13:修复create/release同时操作一个request指针地址时偶现崩溃的问题, 增加防止request地址容易重复的机制
+14:C++到C#结构体msg数组扩大
+15:LinuxC++和C#的Demo均增加语音识别输入音频文件路径设置, 和语音合成音频文件路径显示
+
+-----2023/10/08 Version:3.1.17a/b/c-----
+1: 修复调用系统getaddrinfo_a()接口进行dns解析时, 低概率出现卡死和崩溃的问题
+2: SDK版本信息加入patch号, 例如3.1.17a, 是对3.1.17版本的补丁修复
+3: 增加每次请求的UUID, 解决释放请求后马上申请请求低概率出现同内存地址然后错误操作已释放请求的问题
+
+-----2023/11/01 Version:3.1.17d-----
+1: SSL操作增加锁, 修复SSL_read失败并释放的同时进行SSL_write导致崩溃的问题
+2: 增加收到异常wsFrame未给出有效的TaskFailed的问题, 同时增加相关日志便于进一步判断错误
+3: 增加每次请求关键步骤的记录, 记录信息通过TaskFailed和Closed回调给出
+
+-----2024/01/06 Version:3.1.17e-----
+1: 增加DNS搜索domain - gds.alibabadns.com, 解决无法找到域名 nls-gateway.cn-shanghai-internal.aliyuncs.com 的问题
+2: 修复录音文件转写中的报错 - FlowControlError: The taskid requests frequency should be greater than 1qps
