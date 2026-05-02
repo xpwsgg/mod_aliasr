@@ -80,6 +80,7 @@ typedef struct
   switch_memory_pool_t *pool;
 
   switch_audio_resampler_t *resampler;
+  int read_mode; // 1=read(对端说话), 0=write(本端说话)
 
 } switch_da_t;
 
@@ -386,14 +387,20 @@ static switch_bool_t aliasr_callback(switch_media_bug_t *bug, void *user_data, s
     }
   }
   break;
+  case SWITCH_ABC_TYPE_READ_REPLACE:
   case SWITCH_ABC_TYPE_WRITE_REPLACE:
   {
+    if (pvt->read_mode && type != SWITCH_ABC_TYPE_READ_REPLACE) break;
+    if (!pvt->read_mode && type != SWITCH_ABC_TYPE_WRITE_REPLACE) break;
+
     if (pvt->stoped == 1)
     {
       return SWITCH_TRUE;
     }
 
-    switch_frame_t *frame = switch_core_media_bug_get_write_replace_frame(bug);
+    switch_frame_t *frame = pvt->read_mode
+      ? switch_core_media_bug_get_read_replace_frame(bug)
+      : switch_core_media_bug_get_write_replace_frame(bug);
     if (!frame)
     {
       return SWITCH_TRUE;
@@ -462,7 +469,10 @@ static switch_bool_t aliasr_callback(switch_media_bug_t *bug, void *user_data, s
       int datalen = frame->datalen;
       int16_t *dp = (int16_t *)frame->data;
 
-      switch_core_media_bug_set_write_replace_frame(bug, frame);
+      if (pvt->read_mode)
+        switch_core_media_bug_set_read_replace_frame(bug, frame);
+      else
+        switch_core_media_bug_set_write_replace_frame(bug, frame);
 
       if (read_impl.actual_samples_per_second != 8000)
       {
@@ -545,6 +555,7 @@ SWITCH_STANDARD_APP(start_aliasr_session_function)
   pvt->starting = 0;
   pvt->datalen = 0;
   pvt->session = session;
+  pvt->read_mode = (data && strcasecmp(data, "read") == 0) ? 1 : 0;
 
   if ((status = switch_core_new_memory_pool(&pvt->pool)) != SWITCH_STATUS_SUCCESS)
   {
@@ -555,8 +566,12 @@ SWITCH_STANDARD_APP(start_aliasr_session_function)
 
   switch_mutex_init(&pvt->mutex, SWITCH_MUTEX_NESTED, pvt->pool);
 
+  switch_media_bug_flag_t flags = pvt->read_mode
+    ? (SMBF_READ_REPLACE | SMBF_NO_PAUSE | SMBF_ONE_ONLY)
+    : (SMBF_WRITE_REPLACE | SMBF_NO_PAUSE | SMBF_ONE_ONLY);
+
   if ((status = switch_core_media_bug_add(session, "asr", NULL,
-                                          aliasr_callback, pvt, 0, SMBF_WRITE_REPLACE | SMBF_NO_PAUSE | SMBF_ONE_ONLY, &(pvt->bug))) != SWITCH_STATUS_SUCCESS)
+                                          aliasr_callback, pvt, 0, flags, &(pvt->bug))) != SWITCH_STATUS_SUCCESS)
   {
     return;
   }
