@@ -1,3 +1,5 @@
+
+
 小声BB：不知道原版在哪里了，自己用阿里云nls最新的（2024年04月29日）sdk糊了一个。
 
 
@@ -74,8 +76,8 @@ originate user/1001 'start_aliasr,echo' inline
 
 #### 开发
 
-订阅`CUSTOM aliasr_start` `CUSTOM aliasr_update` `CUSTOM aliasr_stop` 事件
-fs_cli可以通过`/event plain Custom aliasr_start  aliasr_update aliasr_stop`订阅事件
+订阅`CUSTOM start_aliasr` `CUSTOM update_aliasr` `CUSTOM stop_aliasr` 事件
+fs_cli可以通过`/event plain Custom start_aliasr update_aliasr stop_aliasr`订阅事件
 识别结果通过esl输出
 
 #### 回调事件
